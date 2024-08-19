@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import { Spinner } from "@shared/ui/spinner";
 
 const name = ref();
 const sum = ref();
+const isLoading = ref(false);
 const tg = window.Telegram.WebApp;
 
 onMounted(() => {
@@ -16,21 +18,25 @@ onBeforeUnmount(() => {
 });
 
 const handlePayment = async ({
-                                 status,
-                             }: {
+    status,
+}: {
     url: string;
     status: "paid" | "cancelled" | "failed" | "pending";
 }) => {
     if (status === "paid") {
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/notification`, {
-                name: name.value,
-                sum: sum.value,
-            }, {
-                headers: {
-                    "ngrok-skip-browser-warning": 13,
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/notification`,
+                {
+                    name: name.value,
+                    sum: sum.value,
                 },
-            });
+                {
+                    headers: {
+                        "ngrok-skip-browser-warning": 13,
+                    },
+                },
+            );
         } catch (e) {
             tg.showAlert("Не удалось отправить донат");
         }
@@ -42,6 +48,7 @@ async function makePayment() {
     if (!sum.value) return;
 
     try {
+        isLoading.value = true;
         const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/invoice`, {
             headers: {
                 "ngrok-skip-browser-warning": 13,
@@ -51,25 +58,26 @@ async function makePayment() {
             },
         });
         console.log(data);
-        tg.openInvoice(data.link, () => {
-        });
+        tg.openInvoice(data.link, () => {});
     } catch (e) {
         tg.showAlert("Не удалось провести оплату");
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>
 
 <template>
-    <div class="flex h-screen w-full flex-col gap-3 bg-primary-bg-color p-3">
+    <div class="relative flex h-screen w-full flex-col gap-3 bg-primary-bg-color p-3">
         <input
-            class="text-color h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl outline-none"
+            class="h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl text-color outline-none"
             placeholder="Ник"
             v-model="name"
         />
         <div class="relative">
             <input
                 type="number"
-                class="text-color h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl outline-none"
+                class="h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl text-color outline-none"
                 placeholder="Сумма"
                 min="0"
                 v-model="sum"
@@ -85,6 +93,12 @@ async function makePayment() {
             @click="makePayment"
         >
             Оплатить
+        </div>
+        <div
+            class="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit bg-secondary-bg-color p-3"
+            v-show="isLoading"
+        >
+            <Spinner />
         </div>
     </div>
 </template>
