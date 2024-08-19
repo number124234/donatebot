@@ -95,7 +95,7 @@ async function makePayment() {
             Оплатить
         </div>
         <div
-            class="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit bg-secondary-bg-color p-3"
+            class="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit rounded-2xl bg-secondary-bg-color p-3"
             v-show="isLoading"
         >
             <Spinner />
