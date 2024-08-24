@@ -2,11 +2,13 @@
 import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { Spinner } from "@shared/ui/spinner";
+import { useActiveElement } from "@vueuse/core";
 
 const name = ref();
 const sum = ref();
 const isLoading = ref(false);
 const tg = window.Telegram.WebApp;
+const activeElement = useActiveElement();
 
 onMounted(() => {
     tg.onEvent("invoiceClosed", handlePayment);
@@ -68,7 +70,7 @@ async function makePayment() {
 </script>
 
 <template>
-    <div class="relative flex h-screen w-full flex-col gap-3 bg-primary-bg-color p-3">
+    <div class="relative flex h-full w-full flex-col gap-3 bg-primary-bg-color p-3">
         <input
             class="h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl text-color outline-none"
             placeholder="Ник"
@@ -88,6 +90,7 @@ async function makePayment() {
                 ⭐
             </div>
         </div>
+        <div class="h-full w-full" @click="activeElement && activeElement.blur()"></div>
         <div
             class="mt-auto flex h-20 w-full cursor-pointer items-center justify-center rounded-2xl bg-button-color text-3xl text-button-text-color"
             @click="makePayment"
