@@ -72,7 +72,7 @@ async function makePayment() {
 <template>
     <div class="relative flex h-full w-full flex-col gap-3 bg-primary-bg-color p-3">
         <input
-            class="h-20 w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl text-color outline-none"
+            class="min-h-[80px] w-full rounded-2xl bg-secondary-bg-color p-3 text-3xl text-color outline-none"
             placeholder="Ник"
             v-model="name"
         />
@@ -92,7 +92,7 @@ async function makePayment() {
         </div>
         <div class="h-full w-full" @click="activeElement && activeElement.blur()"></div>
         <div
-            class="mt-auto flex h-20 w-full cursor-pointer items-center justify-center rounded-2xl bg-button-color text-3xl text-button-text-color"
+            class="mt-auto flex min-h-[80px] w-full cursor-pointer items-center justify-center rounded-2xl bg-button-color text-3xl text-button-text-color"
             @click="makePayment"
         >
             Оплатить
